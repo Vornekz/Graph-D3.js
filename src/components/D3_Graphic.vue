@@ -46,12 +46,9 @@ export default class D3_Graphic extends Vue {
   private dataset: readonly object[] | undefined = [];
 
   async mounted() {
-
-
     const data: object[] | undefined = await d3.json("data/cities.json");
 
     this.dataset = Object.freeze(data);
-
   }
 
   createHierarhy(val: any) {
@@ -84,34 +81,18 @@ export default class D3_Graphic extends Vue {
 
   arc(): any {
     return d3.arc()
-        .startAngle((d: any) => {
-          return d.x0;
-        })
-        .endAngle((d: any) => {
-          return d.x1;
-        })
-        .innerRadius((d: any) => {
-          return d.y0;
-        })
-        .outerRadius((d: any) => {
-          return d.y1;
-        });
+        .startAngle((d: any) => d.x0)
+        .endAngle((d: any) => d.x1)
+        .innerRadius((d: any) => d.y0)
+        .outerRadius((d: any) => d.y1)
   }
 
   arcHover(): any {
     return d3.arc()
-        .startAngle((d: any) => {
-          return d.x0;
-        })
-        .endAngle((d: any) => {
-          return d.x1;
-        })
-        .innerRadius((d: any) => {
-          return d.y0;
-        })
-        .outerRadius((d: any) => {
-          return d.y1 + 20;
-        })
+        .startAngle((d: any) => d.x0)
+        .endAngle((d: any) => d.x1)
+        .innerRadius((d: any) => d.y0)
+        .outerRadius((d: any) => d.y1 + 20)
   }
 
   createArc() {
@@ -177,7 +158,7 @@ export default class D3_Graphic extends Vue {
         .join("text")
         .attr("fill", "#c1c1d0")
         .attr("font-size", "13px")
-        .attr("fill-opacity", (d: any) => +this.labelVisible(d))
+        .attr("fill-opacity", (d: any) => Number(this.labelVisible(d)))
         .attr("transform", (d: any) => this.labelTransform(d))
         .transition().delay(this.h.descendants().length * 10)
         .text((d: any) => d.data[0] ? d.data[0] : d.data.key)
@@ -193,8 +174,7 @@ export default class D3_Graphic extends Vue {
       const x = (d.x0 + d.x1) / 2 * 180 / Math.PI;
       const y = (d.y0 + d.y1) / this.height * this.radius;
       return `rotate(${x - 90}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`
-    } else
-      return "";
+    } else return ""
   }
 
 
@@ -208,9 +188,7 @@ export default class D3_Graphic extends Vue {
       return d3.group(this.dataset!, (d: any) => d[this.groupOrder![0]], (d: any) => d[this.groupOrder![1]])
     } else if (this.groupOrder![0]) {
       return d3.group(this.dataset!, (d: any) => d[this.groupOrder![0]])
-    } else {
-      return this.dataset!
-    }
+    } else return this.dataset!
   }
 
   get groupData() {
