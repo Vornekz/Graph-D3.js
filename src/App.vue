@@ -1,29 +1,39 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+    <D3_Graphic class="graphic"/>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import HelloWorld from './components/HelloWorld.vue';
+import {Component, Vue} from 'vue-property-decorator';
+import D3_Graphic from "@/components/D3_Graphic.vue";
 
 @Component({
+  name: "App",
   components: {
-    HelloWorld,
-  },
+    D3_Graphic
+  }
 })
-export default class App extends Vue {}
+export default class App extends Vue {
+
+}
 </script>
 
 <style lang="scss">
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  min-height: 100vh;
+  background-color: #32334f;
+
+  .graphic {
+    min-height: 100vh;
+    box-sizing: unset;
+  }
+
 }
 </style>
