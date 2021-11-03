@@ -119,7 +119,7 @@ export default class D3_Graphic extends Vue {
         .style('fill', (d: any) => this.color((d.children ? d : d.parent).data))
         .attr("fill-opacity", "0.6")
         .on("click", (event, d: any) => {
-          if (d.children) {
+          if (d.children && d.parent) {
             this.newGroup = d.data
           }
         })
