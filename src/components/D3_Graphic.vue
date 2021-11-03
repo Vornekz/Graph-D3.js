@@ -122,6 +122,9 @@ export default class D3_Graphic extends Vue {
           if (d.children && d.parent) {
             this.newGroup = d.data
           }
+          if (!d.parent && d.data[0] !== "World") {
+            this.newGroup = this.groupData
+          }
         })
         .on("mouseover", (event, d: any) => {
           d3.select("#tooltip")
