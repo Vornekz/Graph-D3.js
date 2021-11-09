@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import {Component, Watch, Vue} from 'vue-property-decorator';
+import {Component, Watch, Vue, Prop} from 'vue-property-decorator';
 import * as d3 from "d3"
 
 
@@ -37,19 +37,14 @@ import * as d3 from "d3"
 })
 
 export default class D3_Graphic extends Vue {
+  @Prop() readonly dataset!: object[];
+  @Prop() readonly group!: (groupOrder: string[]) => any;
   private height: number = 40;
   private radius: number = this.height / 2;
   private color: Function = d3.scaleOrdinal(["#828da7", "#b06c67", "#d17a7a", "#9b6165", "#846b8d", "#a1acd0"]);
   private h: any = d3.hierarchy({});
-  private newGroup: any[] | undefined = [];
-  private groupOrder: string[] | undefined = [];
-  private dataset: readonly object[] | undefined = [];
-
-  async mounted() {
-    const data: object[] | undefined = await d3.json("data/cities.json");
-
-    this.dataset = Object.freeze(data);
-  }
+  private newGroup: any[] = [];
+  private groupOrder: string[] = [];
 
   createHierarhy(val: any) {
     const h = d3.hierarchy(val, (v) => v[1])
@@ -180,22 +175,13 @@ export default class D3_Graphic extends Vue {
     } else return ""
   }
 
-
   get layout() {
     return d3.partition()
         .size([2 * Math.PI, this.radius * this.radius])
   }
 
-  get group() {
-    if (this.groupOrder![0] && this.groupOrder![1]) {
-      return d3.group(this.dataset!, (d: any) => d[this.groupOrder![0]], (d: any) => d[this.groupOrder![1]])
-    } else if (this.groupOrder![0]) {
-      return d3.group(this.dataset!, (d: any) => d[this.groupOrder![0]])
-    } else return this.dataset!
-  }
-
   get groupData() {
-    return ["World", this.group]
+    return ["World", this.group(this.groupOrder)]
   }
 
   @Watch("layout")
