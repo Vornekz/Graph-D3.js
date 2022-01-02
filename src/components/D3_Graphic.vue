@@ -30,6 +30,7 @@
 <script lang="ts">
 import {Component, Watch, Vue, Prop} from 'vue-property-decorator';
 import * as d3 from "d3"
+import {HierarchyNode} from "d3";
 
 
 @Component({
@@ -37,16 +38,17 @@ import * as d3 from "d3"
 })
 
 export default class D3_Graphic extends Vue {
-  @Prop() readonly dataset!: object[];
-  @Prop() readonly group!: (groupOrder: string[]) => any;
+  @Prop(Array) readonly dataset!: object[];
+  @Prop(Function) readonly group!: (groupOrder: string[]) => any;
+
   private height: number = 40;
   private radius: number = this.height / 2;
   private color: Function = d3.scaleOrdinal(["#828da7", "#b06c67", "#d17a7a", "#9b6165", "#846b8d", "#a1acd0"]);
-  private h: any = d3.hierarchy({});
+  private h: HierarchyNode<any> = d3.hierarchy({});
   private newGroup: any[] = [];
   private groupOrder: string[] = [];
 
-  createHierarhy(val: any) {
+  createHierarchy(val: any) {
     const h = d3.hierarchy(val, (v) => v[1])
 
     h.sum(v => v.population).value
@@ -57,7 +59,7 @@ export default class D3_Graphic extends Vue {
 
     this.h = h;
 
-    d3.select("g").remove();
+    d3.select("#svg").select("g").remove();
 
     this.createArc()
     this.createText()
@@ -108,10 +110,12 @@ export default class D3_Graphic extends Vue {
           }
         })
 
-    d3.selectAll("path").attr("fill-rule", "evenodd")
+    d3.select("#svg")
+        .selectAll("path").attr("fill-rule", "evenodd")
         .style("stroke", "#E1D9DFCC")
         .style("stroke-width", "0.2")
         .style('fill', (d: any) => this.color((d.children ? d : d.parent).data))
+        .attr("cursor", "pointer")
         .attr("fill-opacity", "0.6")
         .on("click", (event, d: any) => {
           if (d.children && d.parent) {
@@ -127,6 +131,7 @@ export default class D3_Graphic extends Vue {
               .transition().delay(200)
               .style("opacity", "1")
               .style("color", "#c1c1d0")
+
           d3.select(event.currentTarget)
               .transition().delay(100)
               .attr("d", this.arcHover())
@@ -137,6 +142,7 @@ export default class D3_Graphic extends Vue {
           d3.select("#tooltip")
               .transition().delay(200)
               .style("opacity", "0")
+
           d3.select(event.currentTarget)
               .transition().delay(100)
               .attr("d", this.arc())
@@ -146,7 +152,8 @@ export default class D3_Graphic extends Vue {
   }
 
   createText() {
-    d3.select("g")
+    d3.select("#svg")
+        .select("g")
         .append("g")
         .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
@@ -190,13 +197,13 @@ export default class D3_Graphic extends Vue {
   }
 
   @Watch("newGroup")
-  onHierarhyChanged(val: any) {
-    this.createHierarhy(val)
+  onHierarchyChanged(val: any[]) {
+    this.createHierarchy(val)
   }
 
   @Watch("groupData")
-  onGroupDataChanged(val: any) {
-    this.createHierarhy(val)
+  onGroupDataChanged(val: any[]) {
+    this.createHierarchy(val)
   }
 
 }
@@ -212,8 +219,14 @@ section {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 70%;
     padding: 30px;
     position: relative;
+
+    #svg {
+      width: 75%;
+      height: 100%;
+    }
 
     #tooltip {
       position: absolute;

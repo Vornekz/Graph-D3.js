@@ -3,6 +3,9 @@
     <D3_Graphic class="graphic"
                 :group="group"
                 :dataset="dataset"/>
+    <D3_Graphic2 class="graphic2"
+                 :group="group"
+                 :dataset="dataset"/>
   </div>
 </template>
 
@@ -10,13 +13,15 @@
 import {Component, Vue} from 'vue-property-decorator';
 import {namespace} from "vuex-class";
 import D3_Graphic from "@/components/D3_Graphic.vue";
+import D3_Graphic2 from "@/components/D3_Graphic2.vue";
 
 const graphModule = namespace("GraphModule")
 
 @Component({
   name: "App",
   components: {
-    D3_Graphic
+    D3_Graphic,
+    D3_Graphic2
   }
 })
 export default class App extends Vue {
@@ -45,6 +50,10 @@ export default class App extends Vue {
     min-height: 100vh;
     box-sizing: unset;
   }
+  .graphic2 {
+    min-height: 100vh;
+  }
+
 
 }
 </style>
