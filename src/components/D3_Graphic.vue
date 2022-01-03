@@ -38,8 +38,8 @@ import {HierarchyNode} from "d3";
 })
 
 export default class D3_Graphic extends Vue {
-  @Prop(Array) readonly dataset!: object[];
-  @Prop(Function) readonly group!: (groupOrder: string[]) => any;
+  @Prop({type: Array, required: true}) readonly dataset!: object[];
+  @Prop({type: Function, required: true}) readonly group!: (groupOrder: string[]) => any;
 
   private height: number = 40;
   private radius: number = this.height / 2;
