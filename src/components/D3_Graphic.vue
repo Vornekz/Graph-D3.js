@@ -224,7 +224,7 @@ section {
     position: relative;
 
     #svg {
-      width: 75%;
+      width: 100%;
       height: 100%;
     }
 
