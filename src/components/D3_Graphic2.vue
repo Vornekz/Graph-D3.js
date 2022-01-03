@@ -14,7 +14,7 @@
 <script lang="ts">
 import {Component, Watch, Vue, Prop} from 'vue-property-decorator';
 import * as d3 from "d3"
-import {HierarchyNode} from "d3";
+import {HierarchyNode, text} from "d3";
 
 @Component({
   name: "D3_Graphic2"
@@ -24,9 +24,9 @@ export default class D3_Graphic2 extends Vue {
   @Prop(Array) readonly dataset!: object[];
   @Prop(Function) readonly group!: (groupOrder: string[]) => any;
 
-  private width: number = 1000;
-  private height: number = 1000;
-  private radius: number = 5;
+  private width: number = 1300;
+  private height: number = 1300;
+  private radius: number = 6;
   private groupOrder: string[] = ["region", "subregion"];
   private h: HierarchyNode<any> = d3.hierarchy({});
 
@@ -60,17 +60,43 @@ export default class D3_Graphic2 extends Vue {
         .select("g")
         .append("g")
           .attr("fill", "none")
-          .attr("stroke", "#c44141")
-          .attr("stroke-with", "2")
         .selectAll("path")
           .data(this.h.links())
           .enter().append("path")
             .attr("d", (d: any) => {
               return d3.linkHorizontal()({
                 source: [d.source.y, d.source.x],
-                target: [d.target.y, d.target.x]
+                target: d.target.children == null?[d.target.y - 200, d.target.x]:[d.target.y, d.target.x]
               })
             })
+            .attr("stroke", "#c44141")
+            .attr("stroke-width", "2.5")
+        .on("mouseover", (event, d: any) => {
+          if (d.target.children == null) {
+            d3.select(event.currentTarget)
+                .attr("stroke", "#a8c441")
+
+            d3.select("#svg2")
+                .selectAll(`text`)
+                  .filter(function():boolean {
+                    return d3.select(this).text() == d.target.data.key
+                  })
+                  .attr("fill-opacity", "1")
+          }
+        })
+        .on("mouseout", (event, d: any) => {
+          if (d.target.children == null) {
+            d3.select(event.currentTarget)
+                .attr("stroke", "#c44141")
+
+            d3.select("#svg2")
+                .selectAll(`text`)
+                  .filter(function():boolean {
+                    return d3.select(this).text() == d.target.data.key
+                  })
+                  .attr("fill-opacity", "0")
+          }
+        })
   }
 
   createCircle() {
@@ -86,7 +112,7 @@ export default class D3_Graphic2 extends Vue {
             })
             .attr("r", this.radius)
             .attr("fill", "#fff")
-            .attr("fill-opacity",(d: any) => d.children == null? "0": "1")
+            .attr("fill-opacity",(d: any) => d.children == null? "1": "1")
             .attr("cursor", "pointer")
   }
 
@@ -99,7 +125,7 @@ export default class D3_Graphic2 extends Vue {
         .enter()
           .append("text")
             .attr("transform", (d: any) => {
-               return `translate(${d.y},${d.x  - 8})`
+               return d.children == null?`translate(${d.y - 190},${d.x + 5})`:`translate(${d.y},${d.x - 10})`
             })
             .text((d: any) => d.data[0]? d.data[0]: d.data.key)
               .attr("fill", "#c1c1d0")
