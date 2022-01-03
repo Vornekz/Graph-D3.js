@@ -66,7 +66,7 @@ export default class D3_Graphic2 extends Vue {
             .attr("d", (d: any) => {
               return d3.linkHorizontal()({
                 source: [d.source.y, d.source.x],
-                target: d.target.children == null?[d.target.y - 140, d.target.x]:[d.target.y, d.target.x]
+                target: d.target.children == null ? [d.target.y - 140, d.target.x] : [d.target.y, d.target.x]
               })
             })
             .attr("stroke", "#c44141")
@@ -112,7 +112,7 @@ export default class D3_Graphic2 extends Vue {
             })
             .attr("r", this.radius)
             .attr("fill", "#fff")
-            .attr("fill-opacity",(d: any) => d.children == null? "0": "1")
+            .attr("fill-opacity",(d: any) => d.children == null ? "0" : "1")
             .attr("cursor", "pointer")
   }
 
@@ -125,11 +125,19 @@ export default class D3_Graphic2 extends Vue {
         .enter()
           .append("text")
             .attr("transform", (d: any) => {
-               return d.children == null?`translate(${d.y - 130},${d.x + 5})`:`translate(${d.y},${d.x - 10})`
+               return d.children == null ? `translate(${d.y - 130},${d.x + 5})` : `translate(${d.y},${d.x - 10})`
             })
             .text((d: any) => d.data[0]? d.data[0]: d.data.key)
               .attr("fill", "#c1c1d0")
-              .attr("fill-opacity", (d: any) => d.children == null? "0": "1")
+              .attr("fill-opacity", (d: any) => d.children == null ? "0" : "1")
+              .attr("font-size", "13px")
+          .append("text")
+          .attr("transform", (d: any) => {
+            return d.children == null? `translate(${d.y - 130},${d.x + 5})`: `translate(${d.y},${d.x - 10})`
+          })
+            .text((d: any) => d.value)
+              .attr("fill", "#c1c1d0")
+              .attr("fill-opacity", (d: any) => d.children == null ? "0" : "1")
               .attr("font-size", "13px")
   }
 
