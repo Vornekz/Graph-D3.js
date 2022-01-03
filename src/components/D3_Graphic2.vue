@@ -82,6 +82,13 @@ export default class D3_Graphic2 extends Vue {
                     return d3.select(this).text() == d.target.data.key
                   })
                   .attr("fill-opacity", "1")
+
+            d3.select("#svg2")
+                .selectAll(`text`)
+                .filter(function():boolean {
+                  return d3.select(this).text() == d.target.value + " " + "people"
+                })
+                .attr("fill-opacity", "1")
           }
         })
         .on("mouseout", (event, d: any) => {
@@ -95,6 +102,13 @@ export default class D3_Graphic2 extends Vue {
                     return d3.select(this).text() == d.target.data.key
                   })
                   .attr("fill-opacity", "0")
+
+            d3.select("#svg2")
+                .selectAll(`text`)
+                .filter(function():boolean {
+                  return d3.select(this).text() == d.target.value + " " + "people"
+                })
+                .attr("fill-opacity", "0")
           }
         })
   }
@@ -114,6 +128,28 @@ export default class D3_Graphic2 extends Vue {
             .attr("fill", "#fff")
             .attr("fill-opacity",(d: any) => d.children == null ? "0" : "1")
             .attr("cursor", "pointer")
+            .on("mouseover", (event, d: any) => {
+                d3.select(event.currentTarget)
+                    .attr("fill", "#a8c441")
+
+                d3.select("#svg2")
+                    .selectAll(`text`)
+                    .filter(function():boolean {
+                      return d3.select(this).text() == d.value + " " + "people"
+                    })
+                    .attr("fill-opacity", "1")
+            })
+            .on("mouseout", (event, d: any) => {
+                d3.select(event.currentTarget)
+                    .attr("fill", "#fff")
+
+                d3.select("#svg2")
+                    .selectAll(`text`)
+                    .filter(function():boolean {
+                      return d3.select(this).text() == d.value + " " + "people"
+                    })
+                    .attr("fill-opacity", "0")
+            })
   }
 
   createText() {
@@ -125,25 +161,33 @@ export default class D3_Graphic2 extends Vue {
         .enter()
           .append("text")
             .attr("transform", (d: any) => {
-               return d.children == null ? `translate(${d.y - 130},${d.x + 5})` : `translate(${d.y},${d.x - 10})`
+               return d.children == null ? `translate(${d.y - 130},${d.x + 10})` : `translate(${d.y},${d.x - 10})`
             })
             .text((d: any) => d.data[0]? d.data[0]: d.data.key)
               .attr("fill", "#c1c1d0")
               .attr("fill-opacity", (d: any) => d.children == null ? "0" : "1")
               .attr("font-size", "13px")
+
+    d3.select("#svg2")
+        .select("g")
+        .append("g")
+        .selectAll("text")
+        .data(this.h.descendants())
+        .enter()
           .append("text")
           .attr("transform", (d: any) => {
-            return d.children == null? `translate(${d.y - 130},${d.x + 5})`: `translate(${d.y},${d.x - 10})`
+            return d.parent == null ? `translate(${d.y},${d.x - 30})` : d.children == null ? `translate(${d.y - 130},${d.x + 25})` : `translate(${d.y - 102},${d.x - 10})`
           })
-            .text((d: any) => d.value)
+            .text((d: any) => d.value + " " + "people")
               .attr("fill", "#c1c1d0")
-              .attr("fill-opacity", (d: any) => d.children == null ? "0" : "1")
-              .attr("font-size", "13px")
+              .attr("fill-opacity", "0")
+              .attr("font-size", "12px")
   }
 
   @Watch("groupData")
   onGroupDataChanged(val: any[]) {
     this.createHierarchy(val)
+    console.log(this.h.links())
   }
 
 }
