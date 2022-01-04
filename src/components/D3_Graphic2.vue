@@ -5,7 +5,6 @@
            :width="width"
            :height="height"
            :viewBox="`0, -20, ${width + 200}, ${height + 100}`">
-        <g></g>
       </svg>
     </div>
   </section>
@@ -28,6 +27,7 @@ export default class D3_Graphic2 extends Vue {
   private height: number = 1100;
   private radius: number = 6;
   private groupOrder: string[] = ["region", "subregion"];
+  private newGroup: any[] = [];
   private hierarchy: HierarchyNode<any> = d3.hierarchy({});
 
   get layout() {
@@ -50,6 +50,8 @@ export default class D3_Graphic2 extends Vue {
 
     this.hierarchy = hierarchy;
 
+    d3.select("#svg2").select("g").remove();
+
     this.createLinks()
     this.createCircle()
     this.createText()
@@ -57,7 +59,7 @@ export default class D3_Graphic2 extends Vue {
 
   createLinks() {
     d3.select("#svg2")
-        .select("g")
+        .append("g")
           .append("g")
             .attr("fill", "none")
             .selectAll("path")
@@ -129,6 +131,14 @@ export default class D3_Graphic2 extends Vue {
                 .attr("fill", "#fff")
                 .attr("fill-opacity",(d: any) => d.children == null ? "0" : "1")
                 .attr("cursor", "pointer")
+                .on("click", (event, d: any) => {
+                  if (d.children && d.parent) {
+                    this.newGroup = d.data
+                  }
+                  if (!d.parent && d.data[0] !== "World") {
+                    this.newGroup = this.groupData
+                  }
+                })
                 .on("mouseover", (event, d: any) => {
                     d3.select(event.currentTarget)
                         .attr("fill", "#a8c441")
@@ -190,6 +200,13 @@ export default class D3_Graphic2 extends Vue {
 
   @Watch("groupData")
   onGroupDataChanged(val: any[]) {
+    this.createHierarchy(val)
+    console.log(this.hierarchy.descendants())
+
+  }
+
+  @Watch("newGroup")
+  onNewGroupChanged(val: any[]) {
     this.createHierarchy(val)
   }
 
