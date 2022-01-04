@@ -22,7 +22,6 @@
         <g></g>
       </svg>
       <div id="tooltip"></div>
-
     </div>
   </section>
 </template>
@@ -44,20 +43,20 @@ export default class D3_Graphic extends Vue {
   private height: number = 40;
   private radius: number = this.height / 2;
   private color: Function = d3.scaleOrdinal(["#828da7", "#b06c67", "#d17a7a", "#9b6165", "#846b8d", "#a1acd0"]);
-  private h: HierarchyNode<any> = d3.hierarchy({});
+  private hierarchy: HierarchyNode<any> = d3.hierarchy({});
   private newGroup: any[] = [];
   private groupOrder: string[] = [];
 
   createHierarchy(val: any) {
-    const h = d3.hierarchy(val, (v) => v[1])
+    const hierarchy = d3.hierarchy(val, (v) => v[1])
 
-    h.sum(v => v.population).value
+    hierarchy.sum(v => v.population).value
 
-    h.sort((a, b) => d3.ascending(b.value, a.value))
+    hierarchy.sort((a, b) => d3.ascending(b.value, a.value))
 
-    this.layout(h)
+    this.layout(hierarchy)
 
-    this.h = h;
+    this.hierarchy = hierarchy;
 
     d3.select("#svg").select("g").remove();
 
@@ -95,78 +94,78 @@ export default class D3_Graphic extends Vue {
   createArc() {
     this.createSvg().append("g")
         .selectAll("path")
-        .data(this.h.descendants().reverse())
-        .enter().append("svg:path")
-        .transition()
-        .delay((d, i) => {
-          return i * 10;
-        })
-        .attrTween("d", (d: any) => {
-          let i = d3.interpolate(d.startAngle + 0.1, d.endAngle);
-          let arc = this.arc()
-          return function (t: any) {
-            d.endAngle = i(t);
-            return arc(d)
-          }
-        })
+          .data(this.hierarchy.descendants().reverse())
+          .enter().append("svg:path")
+            .transition()
+            .delay((d, i) => {
+              return i * 10;
+            })
+            .attrTween("d", (d: any) => {
+              let i = d3.interpolate(d.startAngle + 0.1, d.endAngle);
+              let arc = this.arc()
+              return function (t: any) {
+                d.endAngle = i(t);
+                return arc(d)
+              }
+            })
 
     d3.select("#svg")
         .selectAll("path").attr("fill-rule", "evenodd")
-        .style("stroke", "#E1D9DFCC")
-        .style("stroke-width", "0.2")
-        .style('fill', (d: any) => this.color((d.children ? d : d.parent).data))
-        .attr("cursor", "pointer")
-        .attr("fill-opacity", "0.6")
-        .on("click", (event, d: any) => {
-          if (d.children && d.parent) {
-            this.newGroup = d.data
-          }
-          if (!d.parent && d.data[0] !== "World") {
-            this.newGroup = this.groupData
-          }
-        })
-        .on("mouseover", (event, d: any) => {
-          d3.select("#tooltip")
-              .html((d.data[0] ? d.data[0] : d.data.key) + "<br/>" + `Population = ${(d.value * 0.000001).toFixed(3)} milion`)
-              .transition().delay(200)
-              .style("opacity", "1")
-              .style("color", "#c1c1d0")
+          .style("stroke", "#E1D9DFCC")
+          .style("stroke-width", "0.2")
+          .style('fill', (d: any) => this.color((d.children ? d : d.parent).data))
+          .attr("cursor", "pointer")
+          .attr("fill-opacity", "0.6")
+          .on("click", (event, d: any) => {
+            if (d.children && d.parent) {
+              this.newGroup = d.data
+            }
+            if (!d.parent && d.data[0] !== "World") {
+              this.newGroup = this.groupData
+            }
+          })
+          .on("mouseover", (event, d: any) => {
+            d3.select("#tooltip")
+                .html((d.data[0] ? d.data[0] : d.data.key) + "<br/>" + `Population = ${(d.value * 0.000001).toFixed(3)} milion`)
+                .transition().delay(200)
+                .style("opacity", "1")
+                .style("color", "#c1c1d0")
 
-          d3.select(event.currentTarget)
-              .transition().delay(100)
-              .attr("d", this.arcHover())
-              .attr("fill-opacity", "1")
-              .style("stroke", "none")
-        })
-        .on("mouseout", (event) => {
-          d3.select("#tooltip")
-              .transition().delay(200)
-              .style("opacity", "0")
+            d3.select(event.currentTarget)
+                .transition().delay(100)
+                .attr("d", this.arcHover())
+                .attr("fill-opacity", "1")
+                .style("stroke", "none")
+          })
+          .on("mouseout", (event) => {
+            d3.select("#tooltip")
+                .transition().delay(200)
+                .style("opacity", "0")
 
-          d3.select(event.currentTarget)
-              .transition().delay(100)
-              .attr("d", this.arc())
-              .attr("fill-opacity", "0.6")
-              .style("stroke", "#E1D9DFCC")
-        })
+            d3.select(event.currentTarget)
+                .transition().delay(100)
+                .attr("d", this.arc())
+                .attr("fill-opacity", "0.6")
+                .style("stroke", "#E1D9DFCC")
+          })
   }
 
   createText() {
     d3.select("#svg")
         .select("g")
-        .append("g")
-        .attr("pointer-events", "none")
-        .attr("text-anchor", "middle")
-        .style("user-select", "none")
-        .selectAll("text")
-        .data(this.h.descendants())
-        .join("text")
-        .attr("fill", "#c1c1d0")
-        .attr("font-size", "13px")
-        .attr("fill-opacity", (d: any) => Number(this.labelVisible(d)))
-        .attr("transform", (d: any) => this.labelTransform(d))
-        .transition().delay(this.h.descendants().length * 10)
-        .text((d: any) => d.data[0] ? d.data[0] : d.data.key)
+          .append("g")
+            .attr("pointer-events", "none")
+            .attr("text-anchor", "middle")
+            .style("user-select", "none")
+            .selectAll("text")
+              .data(this.hierarchy.descendants())
+              .join("text")
+                .attr("fill", "#c1c1d0")
+                .attr("font-size", "13px")
+                .attr("fill-opacity", (d: any) => Number(this.labelVisible(d)))
+                .attr("transform", (d: any) => this.labelTransform(d))
+                .transition().delay(this.hierarchy.descendants().length * 10)
+                .text((d: any) => d.data[0] ? d.data[0] : d.data.key)
   }
 
 
@@ -193,7 +192,7 @@ export default class D3_Graphic extends Vue {
 
   @Watch("layout")
   onLayoutChanged() {
-    this.layout(this.h)
+    this.layout(this.hierarchy)
   }
 
   @Watch("newGroup")
