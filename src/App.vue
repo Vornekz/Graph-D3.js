@@ -2,10 +2,12 @@
   <div id="app">
     <div class="tabs">
       <button class="button1"
+              :class="{'selected': selected}"
           @click="changeButton1">
         Graphic 1
       </button>
       <button class="button2"
+              :class="{'selected': !selected}"
           @click="changeButton2">
         Graphic 2
       </button>
@@ -42,6 +44,7 @@ export default class App extends Vue {
   @graphModule.Action protected graphData!: () => Promise<object[] | undefined>;
 
   private tabs: string = "graph1"
+  private selected: boolean = true
 
   async mounted() {
     await this.graphData()
@@ -49,10 +52,12 @@ export default class App extends Vue {
 
   changeButton1() {
     this.tabs = "graph1"
+    this.selected = true
     this.graphData()
   }
   changeButton2() {
     this.tabs = "graph2"
+    this.selected = false
     this.graphData()
   }
 }
@@ -97,6 +102,11 @@ export default class App extends Vue {
       &:hover {
         border: 4px #9E9EC48C solid;
       }
+    }
+
+    .selected {
+      pointer-events: none;
+      border: 4px #9E9EC48C solid;
     }
   }
 
