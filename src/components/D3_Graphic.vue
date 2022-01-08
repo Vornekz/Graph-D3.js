@@ -218,7 +218,7 @@ section {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 70%;
+    width: 60%;
     padding: 30px;
     position: relative;
 

@@ -1,9 +1,21 @@
 <template>
   <div id="app">
+    <div class="tabs">
+      <button class="button1"
+          @click="changeButton1">
+        Graphic 1
+      </button>
+      <button class="button2"
+          @click="changeButton2">
+        Graphic 2
+      </button>
+    </div>
     <D3_Graphic class="graphic"
+                v-if="tabs === 'graph1'"
                 :group="group"
                 :dataset="dataset"/>
     <D3_Graphic2 class="graphic2"
+                 v-if="tabs === 'graph2'"
                  :group="group"
                  :dataset="dataset"/>
   </div>
@@ -29,13 +41,26 @@ export default class App extends Vue {
   @graphModule.Getter protected group!: (groupOrder: string[]) => any;
   @graphModule.Action protected graphData!: () => Promise<object[] | undefined>;
 
+  private tabs: string = "graph1"
+
   async mounted() {
     await this.graphData()
+  }
+
+  changeButton1() {
+    this.tabs = "graph1"
+    this.graphData()
+  }
+  changeButton2() {
+    this.tabs = "graph2"
+    this.graphData()
   }
 }
 </script>
 
 <style lang="scss">
+@import "assets/mixins";
+
 * {
   padding: 0;
   margin: 0;
@@ -45,6 +70,36 @@ export default class App extends Vue {
 #app {
   min-height: 100vh;
   background-color: #32334f;
+
+  .tabs {
+    position: fixed;
+    right: 0;
+    z-index: 1;
+
+
+    .button1 {
+      @include changeButtonStyle();
+      border-bottom-left-radius: 60%;
+      border-bottom-right-radius: 10%;
+      transition: .2s;
+
+      &:hover {
+       border: 4px #9E9EC48C solid;
+      }
+    }
+
+    .button2 {
+      @include changeButtonStyle();
+      border-bottom-right-radius: 60%;
+      border-bottom-left-radius: 10%;
+      transition: .2s;
+
+      &:hover {
+        border: 4px #9E9EC48C solid;
+      }
+    }
+  }
+
 
   .graphic {
     min-height: 100vh;
