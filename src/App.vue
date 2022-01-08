@@ -72,7 +72,7 @@ export default class App extends Vue {
   background-color: #32334f;
 
   .tabs {
-    position: fixed;
+    position: absolute;
     right: 0;
     z-index: 1;
 
