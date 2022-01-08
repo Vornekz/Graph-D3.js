@@ -219,6 +219,7 @@ section {
     flex-direction: column;
     align-items: center;
     width: 60%;
+    min-width: 700px;
     padding: 30px;
     position: relative;
 
