@@ -2,22 +2,22 @@
   <div id="app">
     <div class="tabs">
       <button class="button1"
-              :class="{'selected': selected}"
+              :class="{'selected': tabs === 'arcGraph'}"
           @click="changeButton1">
-        Graphic 1
+        Arc Graphic
       </button>
       <button class="button2"
-              :class="{'selected': !selected}"
+              :class="{'selected': tabs === 'treeGraph'}"
           @click="changeButton2">
-        Graphic 2
+        Tree Graphic
       </button>
     </div>
     <D3_Graphic class="graphic"
-                v-if="tabs === 'graph1'"
+                v-if="tabs === 'arcGraph'"
                 :group="group"
                 :dataset="dataset"/>
     <D3_Graphic2 class="graphic2"
-                 v-if="tabs === 'graph2'"
+                 v-if="tabs === 'treeGraph'"
                  :group="group"
                  :dataset="dataset"/>
   </div>
@@ -43,21 +43,18 @@ export default class App extends Vue {
   @graphModule.Getter protected group!: (groupOrder: string[]) => any;
   @graphModule.Action protected graphData!: () => Promise<object[] | undefined>;
 
-  private tabs: string = "graph1"
-  private selected: boolean = true
+  private tabs: string = "arcGraph"
 
   async mounted() {
     await this.graphData()
   }
 
   changeButton1() {
-    this.tabs = "graph1"
-    this.selected = true
+    this.tabs = "arcGraph"
     this.graphData()
   }
   changeButton2() {
-    this.tabs = "graph2"
-    this.selected = false
+    this.tabs = "treeGraph"
     this.graphData()
   }
 }
