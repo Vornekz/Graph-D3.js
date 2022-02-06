@@ -223,11 +223,6 @@ section {
     padding: 30px;
     position: relative;
 
-    #svg {
-      width: 100%;
-      height: 100%;
-    }
-
     #tooltip {
       position: absolute;
       top: 0;
